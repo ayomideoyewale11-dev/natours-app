@@ -59,6 +59,11 @@ app.use(
           'https://events.mapbox.com',
           'https://cdn.jsdelivr.net',
         ],
+        frameSrc: [
+          "'self'",
+          'https://js.stripe.com',
+          'https://hooks.stripe.com',
+        ],
         workerSrc: ["'self'", 'blob:'],
       },
     },
