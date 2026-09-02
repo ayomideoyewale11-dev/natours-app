@@ -1,0 +1,6 @@
+.tmp-build/
+reference.js
+reference.pug
+node_modules/
+.parcel-cache/
+*.env
