@@ -52,7 +52,7 @@ reviewSchema.pre(/^find/, function () {
 });
 
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
-  console.log(tourId);
+  // console.log(tourId);
   const stats = await this.aggregate([
     {
       $match: { tour: tourId },
@@ -66,7 +66,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log(stats);
+  // console.log(stats);
 
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
@@ -90,7 +90,7 @@ reviewSchema.post('save', function () {
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function () {
   this.r = await this.model.findOne(this.getQuery());
-  console.log(this.r);
+  // console.log(this.r);
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {

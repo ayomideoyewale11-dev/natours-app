@@ -17,6 +17,7 @@
     "@babel/polyfill": "^7.12.1",
     "axios": "^1.19.0",
     "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
@@ -60,7 +61,8 @@
     "@parcel/watcher@2.6.0": true,
     "@swc/core@1.16.1": true,
     "lmdb@2.8.5": true,
-    "msgpackr-extract@3.0.4": true
+    "msgpackr-extract@3.0.4": true,
+    "core-js@2.6.12": true
   },
   "clientBundle": "public/js/dist/entry.js",
   "targets": {
