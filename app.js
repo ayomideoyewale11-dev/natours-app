@@ -43,6 +43,7 @@ app.use(
           "'self'",
           'https://api.mapbox.com',
           'https://cdn.jsdelivr.net',
+          'https://js.stripe.com',
         ],
         styleSrc: [
           "'self'",
