@@ -47,11 +47,13 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    role: req.body.role, // allow role to be set
+    // role: req.body.role, // allow role to be set
   });
 
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  new Email(newUser, url).sendWelcome().catch((err) => {
+    console.error('Welcome email failed:', err);
+  });
 
   createSendToken(newUser, 201, req, res);
 });

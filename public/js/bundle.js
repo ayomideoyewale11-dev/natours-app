@@ -213,12 +213,14 @@ var _asyncToGenerator = require("@swc/helpers/_/_async_to_generator");
 var _tsGenerator = require("@swc/helpers/_/_ts_generator");
 var _polyfill = require("@babel/polyfill");
 var _login = require("./login");
+var _signup = require("./signup");
 var _mapbox = require("./mapbox");
 var _updateSettings = require("./updateSettings");
 var _stripe = require("./stripe");
 // DOM ELEMENTS
 var mapBox = document.getElementById('map');
 var loginForm = document.querySelector('.form--login');
+var signupForm = document.querySelector('.form--signup');
 var logOutBtn = document.querySelector('.nav__el--logout');
 var userDataForm = document.querySelector('.form-user-data');
 var userPasswordForm = document.querySelector('.form-user-password');
@@ -233,6 +235,35 @@ if (loginForm) loginForm.addEventListener('submit', function(e) {
     var email = document.getElementById('email').value;
     var password = document.getElementById('password').value;
     (0, _login.login)(email, password);
+});
+if (signupForm) signupForm.addEventListener('submit', function(e) {
+    return (/*#__PURE__*/ 0, /*#__PURE__*/ _asyncToGenerator._)(function() {
+        var btn, name, email, password, passwordConfirm;
+        return (0, _tsGenerator._)(this, function(_state) {
+            switch(_state.label){
+                case 0:
+                    e.preventDefault();
+                    btn = document.querySelector('.form--signup button');
+                    btn.textContent = 'Processing...';
+                    btn.disabled = true;
+                    name = document.getElementById('name').value;
+                    email = document.getElementById('email').value;
+                    password = document.getElementById('password').value;
+                    passwordConfirm = document.getElementById('password-confirm').value;
+                    return [
+                        4,
+                        (0, _signup.signup)(name, email, password, passwordConfirm)
+                    ];
+                case 1:
+                    _state.sent();
+                    btn.textContent = 'Sign up';
+                    btn.disabled = false;
+                    return [
+                        2
+                    ];
+            }
+        });
+    })();
 });
 if (logOutBtn) logOutBtn.addEventListener('click', (0, _login.logout));
 if (userDataForm) userDataForm.addEventListener('submit', function(e) {
@@ -284,7 +315,7 @@ if (bookBtn) bookBtn.addEventListener('click', function(e) {
     (0, _stripe.bookTour)(tourId);
 });
 
-},{"@swc/helpers/_/_async_to_generator":"7JktW","@swc/helpers/_/_ts_generator":"jlByh","@babel/polyfill":"71NOp","./login":"ejHB0","./mapbox":"ju3b3","./updateSettings":"4s9cz","./stripe":"02uSS"}],"7JktW":[function(require,module,exports,__globalThis) {
+},{"@swc/helpers/_/_async_to_generator":"7JktW","@swc/helpers/_/_ts_generator":"jlByh","@babel/polyfill":"71NOp","./login":"ejHB0","./signup":"lHcoV","./mapbox":"ju3b3","./updateSettings":"4s9cz","./stripe":"02uSS"}],"7JktW":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "_", function() {
@@ -13936,7 +13967,71 @@ var showAlert = function(type, msg) {
     window.setTimeout(hideAlert, 5000);
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jIm8e"}],"ju3b3":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jIm8e"}],"lHcoV":[function(require,module,exports,__globalThis) {
+/* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "signup", function() {
+    return signup;
+});
+var _asyncToGenerator = require("@swc/helpers/_/_async_to_generator");
+var _tsGenerator = require("@swc/helpers/_/_ts_generator");
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _alerts = require("./alerts");
+var signup = function(name, email, password, passwordConfirm) {
+    return (/*#__PURE__*/ 0, /*#__PURE__*/ _asyncToGenerator._)(function() {
+        var res, err, _err_response_data, _err_response;
+        return (0, _tsGenerator._)(this, function(_state) {
+            switch(_state.label){
+                case 0:
+                    _state.trys.push([
+                        0,
+                        2,
+                        ,
+                        3
+                    ]);
+                    return [
+                        4,
+                        (0, _axiosDefault.default)({
+                            method: 'POST',
+                            url: '/api/v1/users/signup',
+                            data: {
+                                name: name,
+                                email: email,
+                                password: password,
+                                passwordConfirm: passwordConfirm
+                            }
+                        })
+                    ];
+                case 1:
+                    res = _state.sent();
+                    if (res.data.status === 'success') {
+                        (0, _alerts.showAlert)('success', 'Account created successfully!');
+                        window.setTimeout(function() {
+                            location.assign('/');
+                        }, 1500);
+                    }
+                    return [
+                        3,
+                        3
+                    ];
+                case 2:
+                    err = _state.sent();
+                    (0, _alerts.showAlert)('error', ((_err_response = err.response) === null || _err_response === void 0 ? void 0 : (_err_response_data = _err_response.data) === null || _err_response_data === void 0 ? void 0 : _err_response_data.message) || err.message);
+                    return [
+                        3,
+                        3
+                    ];
+                case 3:
+                    return [
+                        2
+                    ];
+            }
+        });
+    })();
+};
+
+},{"@swc/helpers/_/_async_to_generator":"7JktW","@swc/helpers/_/_ts_generator":"jlByh","axios":"8Mcbz","./alerts":"cExmU","@parcel/transformer-js/src/esmodule-helpers.js":"jIm8e"}],"ju3b3":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "displayMap", function() {

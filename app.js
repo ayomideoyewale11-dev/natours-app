@@ -8,6 +8,7 @@ const xss = require('xss');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utilities/AppError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -20,7 +21,7 @@ const viewRouter = require('./routes/viewRoutes');
 // Start Express App
 const app = express();
 
-app.enable('trust proxy', 1);
+app.set('trust proxy', 1);
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +30,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('query parser', 'extended');
 
 // 1) Global Middlewares
+// Implement CORS
+app.use(cors()); // Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({ origin: 'https://www.natours.com' }));
+
+app.options('/{*splat}', cors());
+// app.options('/api/v1/tours/:id', cors())
+
 // Serving Static Files
 // app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
