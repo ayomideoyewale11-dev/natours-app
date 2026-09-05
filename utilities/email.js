@@ -1,63 +1,61 @@
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 const pug = require('pug');
 const { convert } = require('html-to-text');
-
-// new Email(user, url).sendWelcome();
 
 module.exports = class Email {
   constructor(user, url) {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Ayomide Oyewale <${process.env.EMAIL_FROM}>`;
+    this.fromName = 'Ayomide Oyewale';
+    this.fromEmail = process.env.EMAIL_FROM;
   }
 
-  newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      // BREVO
-      return nodemailer.createTransport({
-        host: process.env.BREVO_HOST,
-        port: process.env.BREVO_PORT,
-        secure: false,
-        auth: {
-          user: process.env.BREVO_USERNAME,
-          pass: process.env.BREVO_PASSWORD,
-        },
-      });
-    }
-
-    return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-  }
-
-  // Send the actual email
   async send(template, subject) {
-    // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
       subject,
     });
 
-    // 2) Define email options
-    const mailOptions = {
-      from: this.from,
-      to: this.to,
-      subject,
-      html,
-      text: convert(html, {
-        wordwrap: 130,
-      }),
-    };
-
-    // 3) Create a transport and send email
-    await this.newTransport().sendMail(mailOptions);
+    if (process.env.NODE_ENV === 'production') {
+      // Send via Brevo's HTTPS API (bypasses blocked SMTP ports)
+      const response = await axios.post(
+        'https://api.brevo.com/v3/smtp/email',
+        {
+          sender: { name: this.fromName, email: this.fromEmail },
+          to: [{ email: this.to }],
+          subject,
+          htmlContent: html,
+          textContent: convert(html, { wordwrap: 130 }),
+        },
+        {
+          headers: {
+            'api-key': process.env.BREVO_API_KEY,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log('Email sent, message ID:', response.data.messageId);
+    } else {
+      // Keep SMTP for local dev (Mailtrap, unaffected by Render's restriction)
+      const nodemailer = require('nodemailer');
+      const transport = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+      await transport.sendMail({
+        from: `${this.fromName} <${this.fromEmail}>`,
+        to: this.to,
+        subject,
+        html,
+        text: convert(html, { wordwrap: 130 }),
+      });
+    }
   }
 
   async sendWelcome() {
